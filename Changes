@@ -1,5 +1,17 @@
 Revision history for Perl extension Makefile::GraphViz.
 
+0.02  10/4/2005
+	- Fix the CR/LF problem in the test file, making the module
+	  working on Cygwin and other platforms.
+	- Add command node to the output graphs.
+	- Provide "trim_mode" option to the ->plot method so as to
+	  determine whether plot command nodes.
+	- Provide various options to ->plot, such as "edge_style",
+	  "normal_node_style", "vir_node_style", "cmd_style",
+	  "init_args", "vir_tars", and "gv". So the users get a
+	  much more controls over the output graphic format.
+	- Fix the back-slash problem in GraphViz labels.
+
 0.01  Fri Sep 30 21:12:10 2005
 	- original version; created by h2xs 1.23 with options
 		-AX Makefile::GraphViz
