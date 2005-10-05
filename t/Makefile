@@ -31,7 +31,7 @@ C_T_FILES = $(C_MIN_T_FILES) t\cmain.cod.t t\cbin2hex.exe.t t\chex2bin.exe.t
 # nmake
 # ---------------------------------------------------------
 
-all :: $(IDU_LIB) hex2bin.exe bin2hex.exe t_dir $(CIDU_DLL) $(CIDU_LIB) \
+all :: $(IDU_LIB) t_dir $(CIDU_DLL) $(CIDU_LIB) \
 	C\idui.exe $(DISASM_LIB)
 
 $(IDU_LIB) : $(IDU_TT) $(GLOB_AST) $(STAT_AST)

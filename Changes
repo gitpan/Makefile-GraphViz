@@ -1,5 +1,14 @@
 Revision history for Perl extension Makefile::GraphViz.
 
+0.03 2005-10-4
+	- Add options "end_with" and "exclude" to the ->plot method,
+	  giving even more control over the size of the rendered tree.
+	- Rename option "vir_tars" to "vir_nodes".
+	- Add option "normal_nodes" to rewrite the default behavior.
+	- Add gvmake.pl to /script directory
+	- Use DOT format instead of PNG in the test script,
+	  reducing space requirements significantly.
+
 0.02  10/4/2005
 	- Fix the CR/LF problem in the test file, making the module
 	  working on Cygwin and other platforms.
