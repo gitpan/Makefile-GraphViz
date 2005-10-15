@@ -1,8 +1,8 @@
 #: gvmake.pl
 #: Command-line driver for Makefile::GraphViz
-#: v0.04
+#: v0.05
 #: Copyright (c) 2005 Agent Zhang
-#: 2005-10-05 2005-10-05
+#: 2005-10-05 2005-10-15
 
 use strict;
 use warnings;
@@ -10,7 +10,7 @@ use warnings;
 use Getopt::Std;
 use Makefile::GraphViz;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 my %opts;
 getopts('hf:o:', \%opts);
@@ -29,7 +29,7 @@ _EOC_
 
 my $parser = Makefile::GraphViz->new;
 
-my $makefile = $opts{f};
+my $makefile = $opts{f} || 'Makefile';
 warn "parsing $makefile...\n";
 $parser->parse($makefile) or die $parser->error;
 

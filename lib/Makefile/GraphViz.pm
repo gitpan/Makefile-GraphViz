@@ -1,7 +1,7 @@
 #: Makefile/GraphViz.pm
 #: Plot the detailed structure of Makefiles
 #:   using GraphViz
-#: v0.04
+#: v0.05
 #: Copyright (c) 2005 Agent Zhang
 #: 2005-09-30 2005-10-15
 
@@ -10,12 +10,12 @@ package Makefile::GraphViz;
 use strict;
 use warnings;
 
-use GraphViz 0.07;
+use GraphViz 0.08;
 use base 'Makefile::Parser';
 
 $Makefile::Parser::Strict = 0;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 our $IDCounter = 0;
 
@@ -182,7 +182,7 @@ sub trim_path {
 
 sub trim_cmd {
     my $s = shift;
-    $s =~ s/((?:\S+\s*){1,2}).+/$1/o;
+    $s =~ s/((?:\S+\s+){2})\S.*/$1.../o;
     $s =~ s/\\/\\\\/g;
     return $s;
 }

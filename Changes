@@ -1,5 +1,14 @@
 Revision history for Perl extension Makefile::GraphViz.
 
+0.05 10/15/2005
+	- Fix a tiny bug in script/gvmake.pl, suppressing a stupid
+	  warning caused by the default Makefile name.
+	- Fix a bug in trim_cmd. It now functions properly
+	- Append ``...'' to trimmed command so as to make a difference
+	  in appearance.
+	- Force this module to use the lastes Makefile::Parser 0.08 so
+	  as to get support for implicit rules.
+
 0.04 10/5/2005
 	- Force this module to use the latest Makefile::Parser 0.07
 	- Host this module to the SVN server at OSSF.

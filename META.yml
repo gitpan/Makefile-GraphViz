@@ -1,5 +1,5 @@
 name: Makefile-GraphViz
-version: 0.04
+version: 0.05
 abstract: Plot the Detailed Structure of Makefiles Using GraphViz
 author: Agent Zhang <agent2002@126.com>
 license: perl
@@ -9,7 +9,7 @@ build_requires:
   File::Compare: 0
 requires:
   GraphViz: 0
-  Makefile::Parser: 0
+  Makefile::Parser: 0.08
 no_index:
   directory:
     - inc

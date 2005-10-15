@@ -4,7 +4,7 @@
 #: v0.02
 #: 2005-09-30 2005-10-05
 
-use Test::More tests => 22;
+use Test::More tests => 26;
 use Makefile::GraphViz;
 use File::Compare;
 
@@ -44,8 +44,15 @@ $gv = $parser->plot(
 );
 ok $gv;
 isa_ok $gv, 'GraphViz';
+my $tar = $parser->target('types.cod');
+ok $tar;
+is join("\n", $tar->commands), "cl /nologo /c /FAsc types.c\ndel types.obj";
+is Makefile::GraphViz::trim_cmd('del types.obj'), 'del types.obj';
+is Makefile::GraphViz::trim_cmd("del t\\tmp"), "del t\\\\tmp";
+
 $outfile = 't/cmintest.dot';
 ok $gv->as_canon($outfile);
+#$gv->as_png('t/cmintest.png');
 is File::Compare::compare_text($outfile, "$outfile~"), 0;
 unlink $outfile if !$debug;
 
