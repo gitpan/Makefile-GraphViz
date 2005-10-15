@@ -1,7 +1,7 @@
 #: Makefile/GraphViz.pm
 #: Plot the detailed structure of Makefiles
 #:   using GraphViz
-#: v0.05
+#: v0.06
 #: Copyright (c) 2005 Agent Zhang
 #: 2005-09-30 2005-10-15
 
@@ -10,12 +10,12 @@ package Makefile::GraphViz;
 use strict;
 use warnings;
 
-use GraphViz 0.08;
+use GraphViz 0.09;
 use base 'Makefile::Parser';
 
 $Makefile::Parser::Strict = 0;
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 our $IDCounter = 0;
 
@@ -56,7 +56,6 @@ our %Nodes;
 sub plot {
     my $self = shift;
     my $root_name = shift;
-    $root_name = "$root_name";
     my %opts = @_;
     #warn "@_\n";
 

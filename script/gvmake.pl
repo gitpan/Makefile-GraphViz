@@ -1,6 +1,6 @@
 #: gvmake.pl
 #: Command-line driver for Makefile::GraphViz
-#: v0.05
+#: v0.06
 #: Copyright (c) 2005 Agent Zhang
 #: 2005-10-05 2005-10-15
 
@@ -10,7 +10,7 @@ use warnings;
 use Getopt::Std;
 use Makefile::GraphViz;
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 my %opts;
 getopts('hf:o:', \%opts);

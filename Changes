@@ -1,5 +1,12 @@
 Revision history for Perl extension Makefile::GraphViz.
 
+0.06 10/15/2005
+	- Force this module to use Makefile::Parser 0.09. A serious
+	  bug concerning suffix rule parsing is fixed in
+	  Makefile::Parser 0.09
+	- Add more tests for Makefiles that uses implicit rules
+	  extensively.
+
 0.05 10/15/2005
 	- Fix a tiny bug in script/gvmake.pl, suppressing a stupid
 	  warning caused by the default Makefile name.

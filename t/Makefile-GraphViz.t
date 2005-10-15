@@ -1,10 +1,10 @@
 #: Makefile-GraphViz.t
 #: Test Makefile::GraphViz
 #: Copyright (c) 2005 Agent Zhang
-#: v0.02
+#: v0.06
 #: 2005-09-30 2005-10-05
 
-use Test::More tests => 26;
+use Test::More tests => 34;
 use Makefile::GraphViz;
 use File::Compare;
 
@@ -92,4 +92,26 @@ isa_ok $gv, 'GraphViz';
 $outfile = 't/install2.dot';
 ok $gv->as_canon($outfile);
 is File::Compare::compare_text($outfile, "$outfile~"), 0;
+unlink $outfile if !$debug;
+
+$parser->parse('t/Makefile3');
+$gv = $parser->plot(
+    'all',
+);
+ok $gv;
+isa_ok $gv, 'GraphViz';
+$outfile = 't/sum.dot';
+ok $gv->as_canon($outfile);
+is File::Compare::compare_text($outfile, "t/~sum.dot"), 0;
+unlink $outfile if !$debug;
+
+$parser->parse('t/Makefile4');
+$gv = $parser->plot(
+    'all',
+);
+ok $gv;
+isa_ok $gv, 'GraphViz';
+$outfile = 't/bench.dot';
+ok $gv->as_canon($outfile);
+is File::Compare::compare_text($outfile, "t/~bench.dot"), 0;
 unlink $outfile if !$debug;

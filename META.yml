@@ -9,7 +9,7 @@ build_requires:
   File::Compare: 0
 requires:
   GraphViz: 0
-  Makefile::Parser: 0.08
+  Makefile::Parser: 0.09
 no_index:
   directory:
     - inc
