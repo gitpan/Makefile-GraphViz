@@ -28,7 +28,7 @@ isa_ok $gv, 'GraphViz';
 my $outfile = 't/doc.dot';
 ok $gv->as_canon($outfile);
 #$gv->as_plain('t/tmp.dot');
-is File::Compare::compare($outfile, "$outfile~"), 0;
+is File::Compare::compare_text($outfile, "$outfile~"), 0;
 unlink $outfile if !$debug;
 
 $gv = $parser->plot(
@@ -46,7 +46,7 @@ ok $gv;
 isa_ok $gv, 'GraphViz';
 $outfile = 't/cmintest.dot';
 ok $gv->as_canon($outfile);
-is File::Compare::compare($outfile, "$outfile~"), 0;
+is File::Compare::compare_text($outfile, "$outfile~"), 0;
 unlink $outfile if !$debug;
 
 ok $parser->parse("t/Makefile2");
@@ -58,7 +58,7 @@ ok $gv;
 isa_ok $gv, 'GraphViz';
 $outfile = 't/install.dot';
 ok $gv->as_canon($outfile);
-is File::Compare::compare($outfile, "$outfile~"), 0;
+is File::Compare::compare_text($outfile, "$outfile~"), 0;
 unlink $outfile if !$debug;
 
 $gv = $parser->plot(
@@ -84,5 +84,5 @@ ok $gv;
 isa_ok $gv, 'GraphViz';
 $outfile = 't/install2.dot';
 ok $gv->as_canon($outfile);
-is File::Compare::compare($outfile, "$outfile~"), 0;
+is File::Compare::compare_text($outfile, "$outfile~"), 0;
 unlink $outfile if !$debug;

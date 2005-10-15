@@ -12,7 +12,7 @@ license         ('perl');
 install_script  ($gvmake);
 
 requires        ('GraphViz');
-requires        ('Makefile::Parser');
+requires        ('Makefile::Parser' => 0.07);
 
 build_requires  ('Test::More');
 build_requires  ('File::Compare');

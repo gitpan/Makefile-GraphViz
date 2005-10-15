@@ -1,5 +1,11 @@
 Revision history for Perl extension Makefile::GraphViz.
 
+0.04 10/5/2005
+	- Force this module to use the latest Makefile::Parser 0.07
+	- Host this module to the SVN server at OSSF.
+	- Strip CR from t/* and use File::Compare::compare_text to
+	  compare files.
+
 0.03 2005-10-4
 	- Add options "end_with" and "exclude" to the ->plot method,
 	  giving even more control over the size of the rendered tree.
