@@ -1,7 +1,7 @@
 use strict;
 use inc::Module::Install;
 
-my $gvmake = "script/gvmake.pl";
+my $gvmake = "script/gvmake";
 
 name            ('Makefile-GraphViz');
 version_from    ('lib/Makefile/GraphViz.pm');
@@ -12,7 +12,7 @@ license         ('perl');
 install_script  ($gvmake);
 
 requires        ('GraphViz');
-requires        ('Makefile::Parser' => 0.09);
+requires        ('Makefile::Parser' => '0.10');
 
 build_requires  ('Test::More');
 build_requires  ('File::Compare');

@@ -1,21 +1,21 @@
 #: Makefile/GraphViz.pm
 #: Plot the detailed structure of Makefiles
 #:   using GraphViz
-#: v0.06
+#: v0.07
 #: Copyright (c) 2005 Agent Zhang
-#: 2005-09-30 2005-10-15
+#: 2005-09-30 2005-10-16
 
 package Makefile::GraphViz;
 
 use strict;
 use warnings;
 
-use GraphViz 0.09;
+use GraphViz;
 use base 'Makefile::Parser';
 
 $Makefile::Parser::Strict = 0;
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 our $IDCounter = 0;
 

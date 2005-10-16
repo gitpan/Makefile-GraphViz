@@ -1,8 +1,8 @@
 #: Makefile-GraphViz.t
 #: Test Makefile::GraphViz
 #: Copyright (c) 2005 Agent Zhang
-#: v0.06
-#: 2005-09-30 2005-10-05
+#: v0.07
+#: 2005-09-30 2005-10-16
 
 use Test::More tests => 34;
 use Makefile::GraphViz;
@@ -28,7 +28,7 @@ isa_ok $gv, 'GraphViz';
 my $outfile = 't/doc.dot';
 ok $gv->as_canon($outfile);
 #$gv->as_plain('t/tmp.dot');
-is File::Compare::compare_text($outfile, "$outfile~"), 0;
+is fcmp($outfile, "t/~doc.dot"), 0;
 unlink $outfile if !$debug;
 
 $gv = $parser->plot(
@@ -53,7 +53,7 @@ is Makefile::GraphViz::trim_cmd("del t\\tmp"), "del t\\\\tmp";
 $outfile = 't/cmintest.dot';
 ok $gv->as_canon($outfile);
 #$gv->as_png('t/cmintest.png');
-is File::Compare::compare_text($outfile, "$outfile~"), 0;
+is fcmp($outfile, "$outfile~"), 0;
 unlink $outfile if !$debug;
 
 ok $parser->parse("t/Makefile2");
@@ -65,7 +65,7 @@ ok $gv;
 isa_ok $gv, 'GraphViz';
 $outfile = 't/install.dot';
 ok $gv->as_canon($outfile);
-is File::Compare::compare_text($outfile, "$outfile~"), 0;
+is fcmp($outfile, "$outfile~"), 0;
 unlink $outfile if !$debug;
 
 $gv = $parser->plot(
@@ -91,7 +91,7 @@ ok $gv;
 isa_ok $gv, 'GraphViz';
 $outfile = 't/install2.dot';
 ok $gv->as_canon($outfile);
-is File::Compare::compare_text($outfile, "$outfile~"), 0;
+is fcmp($outfile, "$outfile~"), 0;
 unlink $outfile if !$debug;
 
 $parser->parse('t/Makefile3');
@@ -102,7 +102,7 @@ ok $gv;
 isa_ok $gv, 'GraphViz';
 $outfile = 't/sum.dot';
 ok $gv->as_canon($outfile);
-is File::Compare::compare_text($outfile, "t/~sum.dot"), 0;
+is fcmp($outfile, "t/~sum.dot"), 0;
 unlink $outfile if !$debug;
 
 $parser->parse('t/Makefile4');
@@ -113,5 +113,17 @@ ok $gv;
 isa_ok $gv, 'GraphViz';
 $outfile = 't/bench.dot';
 ok $gv->as_canon($outfile);
-is File::Compare::compare_text($outfile, "t/~bench.dot"), 0;
+is fcmp($outfile, "t/~bench.dot"), 0;
 unlink $outfile if !$debug;
+
+sub fcmp {
+    return File::Compare::compare_text(
+        @_,
+        sub {
+            my ($a, $b) = @_;
+            $a =~ s/[\r\n\s]//g;
+            $b =~ s/[\r\n\s]//g;
+            $a ne $b;
+        }
+    );
+}
