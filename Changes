@@ -1,5 +1,8 @@
 Revision history for Perl extension Makefile::GraphViz.
 
+0.09 10/20/2005
+	- Remove blib from the repository.
+
 0.08 10/17/2005
 	- Make the pictures cmintest.png and doc.png used by
 	  samples.html up to date.
