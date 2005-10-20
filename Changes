@@ -1,11 +1,22 @@
 Revision history for Perl extension Makefile::GraphViz.
 
+0.08 10/17/2005
+	- Make the pictures cmintest.png and doc.png used by
+	  samples.html up to date.
+	- Move the sample pictures to a new folder named samples,
+	  and update the links in samples.html accordingly.
+	- Updated META.yml to the current version.
+	- Tested against Makefile::Parser 0.11 and all tests passed.
+
 0.07 10/16/2005
 	- Update the version number to 0.07
 	- Remove the .pl extention from the gvmake script. Slaven++
 	- Add TODOs to gvmake
 	- Update the SYNOPSIS section in gvmake's POD doc
-	- Fix a bug concerning CR in test files in Cygwin. Slaven++
+	- Fix a bug concerning CR in test files in Cygwin. Now
+	  file comparison in the tests ingores all the CR, LF, and
+	  \s characters, leading full passing rate under Cygwin.
+	  Slaven++
 
 0.06 10/15/2005
 	- Force this module to use Makefile::Parser 0.09. A serious

@@ -1,4 +1,4 @@
-Makefile-GraphViz version 0.07
+Makefile-GraphViz version 0.08
 ==============================
 
 This module uses Makefile::Parser to render user's Makefiles via the amazing

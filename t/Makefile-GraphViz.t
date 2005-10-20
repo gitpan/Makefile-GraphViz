@@ -1,8 +1,8 @@
 #: Makefile-GraphViz.t
 #: Test Makefile::GraphViz
 #: Copyright (c) 2005 Agent Zhang
-#: v0.07
-#: 2005-09-30 2005-10-16
+#: v0.08
+#: 2005-09-30 2005-10-17
 
 use Test::More tests => 34;
 use Makefile::GraphViz;
@@ -27,7 +27,7 @@ ok $gv;
 isa_ok $gv, 'GraphViz';
 my $outfile = 't/doc.dot';
 ok $gv->as_canon($outfile);
-#$gv->as_plain('t/tmp.dot');
+$gv->as_png('t/doc.png') if $debug;
 is fcmp($outfile, "t/~doc.dot"), 0;
 unlink $outfile if !$debug;
 
@@ -52,7 +52,7 @@ is Makefile::GraphViz::trim_cmd("del t\\tmp"), "del t\\\\tmp";
 
 $outfile = 't/cmintest.dot';
 ok $gv->as_canon($outfile);
-#$gv->as_png('t/cmintest.png');
+$gv->as_png('t/cmintest.png') if $debug;
 is fcmp($outfile, "$outfile~"), 0;
 unlink $outfile if !$debug;
 
