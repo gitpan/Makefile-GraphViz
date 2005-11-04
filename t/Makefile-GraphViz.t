@@ -1,8 +1,8 @@
 #: Makefile-GraphViz.t
 #: Test Makefile::GraphViz
 #: Copyright (c) 2005 Agent Zhang
-#: v0.08
-#: 2005-09-30 2005-10-17
+#: v0.10
+#: 2005-09-30 2005-10-28
 
 use Test::More tests => 34;
 use Makefile::GraphViz;
@@ -53,7 +53,7 @@ is Makefile::GraphViz::trim_cmd("del t\\tmp"), "del t\\\\tmp";
 $outfile = 't/cmintest.dot';
 ok $gv->as_canon($outfile);
 $gv->as_png('t/cmintest.png') if $debug;
-is fcmp($outfile, "$outfile~"), 0;
+is fcmp($outfile, "t/~cmintest.dot"), 0;
 unlink $outfile if !$debug;
 
 ok $parser->parse("t/Makefile2");
@@ -65,7 +65,7 @@ ok $gv;
 isa_ok $gv, 'GraphViz';
 $outfile = 't/install.dot';
 ok $gv->as_canon($outfile);
-is fcmp($outfile, "$outfile~"), 0;
+is fcmp($outfile, "t/~install.dot"), 0;
 unlink $outfile if !$debug;
 
 $gv = $parser->plot(
@@ -91,7 +91,7 @@ ok $gv;
 isa_ok $gv, 'GraphViz';
 $outfile = 't/install2.dot';
 ok $gv->as_canon($outfile);
-is fcmp($outfile, "$outfile~"), 0;
+is fcmp($outfile, "t/~install2.dot"), 0;
 unlink $outfile if !$debug;
 
 $parser->parse('t/Makefile3');

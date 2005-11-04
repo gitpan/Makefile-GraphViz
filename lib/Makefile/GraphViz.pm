@@ -1,9 +1,9 @@
 #: Makefile/GraphViz.pm
 #: Plot the detailed structure of Makefiles
 #:   using GraphViz
-#: v0.09
+#: v0.10
 #: Copyright (c) 2005 Agent Zhang
-#: 2005-09-30 2005-10-17
+#: 2005-09-30 2005-10-31
 
 package Makefile::GraphViz;
 
@@ -15,21 +15,20 @@ use base 'Makefile::Parser';
 
 $Makefile::Parser::Strict = 0;
 
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 
 our $IDCounter = 0;
 
 my %VirNodeStyle =
 (
     shape => 'plaintext',
-    color => 'red',
 );
 
 my %NormalNodeStyle =
 (
     shape => 'box',
     style => 'filled',
-    fillcolor => 'yellow',
+    fillcolor => '#f5f694',
 );
 
 my %EdgeStyle =
@@ -41,7 +40,7 @@ my %CmdStyle =
 (
     shape => 'ellipse',
     style => 'filled',
-    fillcolor => 'gray',
+    fillcolor => '#c7f77c',
 );
 
 my %InitArgs = (
@@ -409,7 +408,7 @@ None by default.
 
 =head1 EXAMPLES
 
-Browse L<http://search.cpan.org/src/AGENT/Makefile-GraphViz-0.09/samples.html>
+Browse L<http://search.cpan.org/src/AGENT/Makefile-GraphViz-0.10/samples.html>
 for some sample output graphs.
 
 =head2 INTERNAL FUNCTIONS
@@ -453,7 +452,7 @@ L<Devel::Cover> report on this module test suite.
 =head1 REPOSITORY
 
 For the very latest version of this module, check out the source from
-L<https://svn.openfoundry.org/makefilegv> (Subversion). There is
+L<https://svn.berlios.de/svnroot/repos/makefilegv> (Subversion). There is
 anonymous access to all.
 
 =head1 BUGS

@@ -5,7 +5,7 @@ my $gvmake = "script/gvmake";
 
 name            ('Makefile-GraphViz');
 version_from    ('lib/Makefile/GraphViz.pm');
-abstract       ( 'Plot the Detailed Structure of Makefiles Using GraphViz' );
+abstract       ( 'Plot Makefile building process using GraphViz' );
 author          ('Agent Zhang <agent2002@126.com>');
 license         ('perl');
 

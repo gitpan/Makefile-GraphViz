@@ -1,6 +1,6 @@
 digraph test {
 	graph [ratio=auto];
-	node [label="\N", fillcolor=yellow, shape=box, style=filled];
+	node [label="\N", fillcolor="#f5f694", shape=box, style=filled];
 	edge [color=red];
 	install [label=install];
 	all [label=all];
