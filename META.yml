@@ -1,16 +1,20 @@
-name: Makefile-GraphViz
-version: 0.10
-abstract: Plot Makefile building process using GraphViz
-author: Agent Zhang <agent2002@126.com>
-license: perl
-distribution_type: module
+abstract: Plot the Detailed Structure of Makefiles Using GraphViz
+author: 'Agent Zhang <agentzh@gmail.com>'
 build_requires:
-  Test::More: 0
-  File::Compare: 0
-requires:
-  GraphViz: 0
-  Makefile::Parser: 0.11
+  File::Compare: 1.1003
+  Test::More: 0.62
+distribution_type: module
+generated_by: Module::Install version 0.64
+license: perl
+name: Makefile-GraphViz
 no_index:
   directory:
+    - script
+    - samples
     - inc
-generated_by: Module::Install version 0.37
+    - t
+requires:
+  GraphViz: 2.02
+  Makefile::Parser: 0.11
+  perl: 5.6.1
+version: 0.11
