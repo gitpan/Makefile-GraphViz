@@ -1,5 +1,5 @@
 ---
-abstract: Draw building flowchart from Makefiles using GraphViz
+abstract: Draw building flowcharts from Makefiles using GraphViz
 author: 'Agent Zhang <agentzh@gmail.com>'
 build_requires:
   File::Compare: 0
@@ -18,6 +18,6 @@ no_index:
     - t
 requires:
   GraphViz: 2.02
-  Makefile::Parser: 0.14
+  Makefile::Parser: 0.16
   perl: 5.004
-version: 0.15
+version: 0.16
