@@ -4,7 +4,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 34;
+use Test::More tests => 38;
 use Makefile::GraphViz;
 use File::Compare;
 
@@ -53,7 +53,7 @@ is Makefile::GraphViz::_trim_cmd("del t\\tmp"), "del t\\\\tmp";
 $outfile = 't/cmintest.dot';
 ok $gv->as_canon($outfile);
 $gv->as_png('t/cmintest.png') if $debug;
-is fcmp($outfile, "t/~cmintest.dot"), 0;
+is fcmp($outfile, "t/~cmintest.dot"), 0, $outfile;
 unlink $outfile if !$debug;
 
 ok $parser->parse("t/Makefile2");
@@ -65,7 +65,7 @@ ok $gv;
 isa_ok $gv, 'GraphViz';
 $outfile = 't/install.dot';
 ok $gv->as_canon($outfile);
-is fcmp($outfile, "t/~install.dot"), 0;
+is fcmp($outfile, "t/~install.dot"), 0, $outfile;
 unlink $outfile if !$debug;
 
 $gv = $parser->plot(
@@ -114,6 +114,15 @@ isa_ok $gv, 'GraphViz';
 $outfile = 't/bench.dot';
 ok $gv->as_canon($outfile);
 is fcmp($outfile, "t/~bench.dot"), 0;
+unlink $outfile if !$debug;
+
+$parser->parse('t/Makefile5');
+$gv = $parser->plot_all;
+ok $gv;
+isa_ok $gv, 'GraphViz';
+$outfile = 't/multi.dot';
+ok $gv->as_canon($outfile);
+is fcmp($outfile, "t/~multi.dot"), 0;
 unlink $outfile if !$debug;
 
 sub fcmp {
