@@ -4,45 +4,56 @@ use strict;
 use warnings;
 use vars qw($VERSION);
 
-#use Smart::Comments;
 use GraphViz;
 use base 'Makefile::Parser';
 
-$VERSION = '0.20';
+$VERSION = '0.21';
 
 $Makefile::Parser::Strict = 0;
 
 our $IDCounter = 0;
 
-my %VirNodeStyle =
-(
-    shape => 'plaintext',
+# ================================
+# == Default values & functions ==
+# ================================
+
+my %NormalNodeStyle = (
+    shape     => 'box',
+    style     => 'filled',
+    fillcolor => '#ffff99',
+    fontname  => 'Arial',
+    fontsize  => 10,
 );
 
-my %NormalNodeStyle =
-(
-    shape => 'box',
-    style => 'filled',
-    fillcolor => '#f5f694',
+my %VirNodeStyle = (
+    shape     => 'plaintext'
 );
 
-my %EdgeStyle =
-(
-    color => 'red',
+my %NormalEndNodeStyle = (
+    fillcolor => '#ccff99'
 );
 
-my %CmdStyle =
-(
-    shape => 'ellipse',
-    style => 'filled',
-    fillcolor => '#c7f77c',
+my %VirEndNodeStyle = (
+    shape     => 'plaintext',
+    fillcolor => '#ccff99'
 );
+
+my %CmdStyle = (
+    shape     => 'note',
+    style     => 'filled',
+    fillcolor => '#dddddd',
+    fontname  => 'Monospace',
+    fontsize  => 8,
+);
+
+my %EdgeStyle = ( color => 'red' );
 
 my %InitArgs = (
-    layout => 'dot',
-    ratio => 'auto',
-    node => \%NormalNodeStyle,
-    edge => \%EdgeStyle,
+    layout    => 'dot',
+    ratio     => 'auto',
+    rankdir   => 'BT',
+    node      => \%NormalNodeStyle,
+    edge      => \%EdgeStyle,
 );
 
 our %Nodes;
@@ -52,137 +63,198 @@ sub _gen_id () {
 }
 
 sub _trim_path ($) {
-    my $s = shift;
-    $s =~ s/.+(.{5}[\\\/].*)$/...$1/o;
-    $s =~ s/\\/\\\\/g;
-    return $s;
+    my $path = shift;
+    $path =~ s/.+(.{5}[\\\/].*)$/...$1/o;
+    $path =~ s/\\/\\\\/g;
+    return $path;
 }
 
 sub _trim_cmd ($) {
-    my $s = shift;
-    $s =~ s/((?:\S+\s+){2})\S.*/$1.../o;
-    $s =~ s/\\/\\\\/g;
-    return $s;
+    my $cmd = shift;
+    $cmd =~ s/((?:\S+\s+){2})\S.*/$1.../o;
+    $cmd =~ s/\\/\\\\/g;
+    return $cmd;
+}
+
+sub _url ($) {
+    my $url = shift;
+    $url =~ s/[\/\\:. \t]+/_/g;
+    return $url;
 }
 
 sub _find ($@) {
     my $elem = shift;
     foreach (@_) {
+        if (ref $_) {
+            return 1 if $elem =~ $_;
+        }
         return 1 if $elem eq $_;
     }
     return undef;
 }
 
+# Plot graph with single root target
 sub plot ($$@) {
-    my $self = shift;
-    my $root_name = shift;
-    my %opts = @_;
-    #warn "@_\n";
 
-    # process the ``gv'' option:
+    # ==================================
+    # == Unnamed command line options ==
+    # ==================================
+
+    # Self
+    my $self = shift;
+
+    # Main/root target
+    my $root_name = shift;
+
+    # ================================
+    # == Named command line options ==
+    # ================================
+
+    my %opts = @_;
     my $gv = $opts{gv};
 
-    # process the ``vir_nodes'' option:
-    my $val = $opts{vir_nodes};
-    my @vir_nodes = @$val if $val and ref $val;
-    my %vir_nodes;
-    map { $vir_nodes{$_} = 1 } @vir_nodes;
+    # Helper function for initialising undefined user options with defaults
+    my $init_opts = sub {
+        my $key = shift;
+        $opts{$key} = +shift unless $opts{$key} and ref $opts{$key};
+    };
 
-    # process the ``normal_nodes'' option:
-    $val = $opts{normal_nodes};
-    my @normal_nodes = @$val if $val and ref $val;
-    my %normal_nodes;
-    map { $normal_nodes{$_} = 1 } @normal_nodes;
+    $init_opts->('init_args',             \%InitArgs);
+    $init_opts->('normal_node_style',     \%NormalNodeStyle);
+    $init_opts->('vir_node_style',        \%VirNodeStyle);
+    $init_opts->('normal_end_node_style', \%NormalEndNodeStyle);
+    $init_opts->('vir_end_node_style',    \%VirEndNodeStyle);
+    $init_opts->('cmd_style',             \%CmdStyle);
+    $init_opts->('edge_style',            \%EdgeStyle);
+    $init_opts->('node_trim_fct',         \&_trim_path);
+    $init_opts->('cmd_trim_fct',          \&_trim_cmd);
+    $init_opts->('url_fct',               \&_url);
 
-    # process the ``init_args'' option:
-    $val = $opts{init_args};
-    my %init_args = ($val and ref $val) ? %$val : %InitArgs;
+    $opts{init_args}{name} = qq("$root_name");
+    $opts{init_args}{node} = $opts{normal_node_style};
+    $opts{init_args}{edge} = \%{$opts{edge_style}};
 
-    # process the ``edge_style'' option:
-    $val = $opts{edge_style};
-    my %edge_style = ($val and ref $val) ? %$val : %EdgeStyle;
-    $init_args{edge} = \%edge_style;
+    # =========================
+    # == Initialise GraphViz ==
+    # =========================
 
-    # process the ``normal_node_style'' option:
-    $val = $opts{normal_node_style};
-    my %normal_node_style = ($val and ref $val) ? %$val : %NormalNodeStyle;
-    $init_args{node} = \%normal_node_style;
+    # Do nothing if root node is in exclude list
+    return $gv if _find($root_name, @{$opts{exclude}}) and !_find($root_name, @{$opts{no_exclude}});
 
-    # process the ``vir_node_style'' option:
-    $val = $opts{vir_node_style};
-    my %vir_node_style = ($val and ref $val) ? %$val : %VirNodeStyle;
-
-    # process the ``cmd_style'' option:
-    $val = $opts{cmd_style};
-    my %cmd_style = ($val and ref $val) ? %$val : %CmdStyle;
-
-    # process the ``trim_mode'' option:
-    my $trim_mode = $opts{trim_mode};
-    #warn "TRIM MODE: $trim_mode\n";
-
-    # process the ``end_with'' option:
-    $val = $opts{end_with};
-    my @end_with = ($val and ref $val) ? @$val : ();
-
-    # process the ``exclude'' option:
-    $val = $opts{exclude};
-    my @exclude = ($val and ref $val) ? @$val : ();
-
-    return $gv if _find($root_name, @exclude);
-
+    # Create new graph object if necessary
     if (!$gv) {
-        $gv = GraphViz->new(%init_args);
+        $gv = GraphViz->new(%{$opts{init_args}});
         %Nodes = ();
     }
 
+    # ===========================================
+    # == Create graph, starting from root node ==
+    # ===========================================
+
+    # Assume we have a normal node
     my $is_virtual = 0;
+    # Do nothing if node has already been processed
     if ($Nodes{$root_name}) {
         return $gv;
     }
+    # Add node to processed node list
     $Nodes{$root_name} = 1;
-    #warn "GraphViz: $gv\n";
 
-    my @roots = ($root_name and ref $root_name) ?
-        $root_name : ($self->target($root_name));
+    # Initialise root node list
+    my @roots = ($root_name and ref $root_name)
+        ? $root_name
+        : ($self->target($root_name));
 
-    my $short_name = _trim_path($root_name);
-    if ($normal_nodes{$root_name}) {
+    # INFO: Why a list? Because multiple definitions of the same target with
+    # different prerequisites and recipes (commands) can occur. In this case
+    # $self->target returns multiple target objects with the same name, but
+    # different properties. Run the test suite and uncomment the code below
+    # to see this happen.
+    #if (scalar(@roots) > 1) {
+    #    warn "\n\@roots contains multiple entries\n" ;
+    #    if ($root_name and ref $root_name) {
+    #        warn "  \$root_name is a reference\n" ;
+    #    }
+    #    else {
+    #        warn "  \$self->target(\$root_name) delivers >1 targets\n" ;
+    #        for my $root (@roots) {
+    #            my @p = $root->prereqs();
+    #            my @c = $root->commands();
+    #            warn "    root = $root  ->  prereqs = @p  /  commands = @c\n";
+    #        }
+    #    }
+    #}
+
+    # Trim node name
+    my $short_name = $opts{node_trim_fct}->($root_name);
+
+    # Determine node type (normal or virtual)
+    if (_find($root_name, @{$opts{normal_nodes}})) {
+        # Node is member of normal nodes list -> normal
         $is_virtual = 0;
-    } elsif ($vir_nodes{$root_name} or @roots and !$roots[0]->commands) {
+    } elsif (_find($root_name, @{$opts{vir_nodes}}) or @roots and !$roots[0]->commands) {
+        # Node is member of virtual nodes list or has no commands -> virtual
         $is_virtual = 1;
     }
 
-    if (!@roots or _find($root_name, @end_with)) {
+    # Is there a make target for this node?
+    if (!@roots) {
+        # No -> node is a "tree leave" -> add node, then stop processing
         $gv->add_node(
             $root_name,
-            label => $short_name,
-            $is_virtual ? %vir_node_style : ()
+            label       => $short_name,
+            $is_virtual ? %{$opts{vir_node_style}} : ()
         );
         return $gv;
     }
-    #my $short_name = $root_name;
 
-    my $i = 0;
+    # Loop through node list for current target
     for my $root (@roots) {
-        #warn $i, "???\n";
-        ### $root_name
-        ### $root
-        #$short_name =~ s/\\/\//g;
-        #warn $short_name, "\n";
-        #warn $short_name, "!!!!!!!!!!!!!!!!\n";
-        $gv->add_node(
-            $root_name,
-            label => $short_name,
-            $is_virtual ? %vir_node_style : ()
-        );
+        # Get prerequisites
+        my @prereqs = $root->prereqs;
+        # Is target flagged to be an end node?
+        my $is_end_node = (_find($root_name, @{$opts{end_with}}) and !_find($root_name, @{$opts{no_end_with}})) ? 1 : 0;
 
-        #warn $gv;
+        # Expandable end node (i.e. with prerequisites)?
+        if ($is_end_node and @prereqs) {
+            # Yes -> add end node with URL
+            $gv->add_node(
+                $root_name,
+                label       => $short_name,
+                # Add URL because the user might want to create a set of interlinked
+                # graphs with each end node pointing to its sub-graph
+                URL         => $opts{url_fct}->($root_name),
+                $is_virtual ? %{$opts{vir_end_node_style}} : %{$opts{normal_end_node_style}}
+            );
+            # Call user-defined hook in case she wants to do something with end nodes,
+            # such as collect their names and then recursively plot sub-graphs.
+            $opts{end_with_callback}->($root_name) if $opts{end_with_callback};
+            # Stop processing here (thus the name "end node")
+            #return $gv;
+        }
+        else {
+            # No-> ordinary node or end node without prerequisites -> add normal node
+            $gv->add_node(
+                $root_name,
+                label       => $short_name,
+                $is_virtual ? %{$opts{vir_node_style}} : ()
+            );
+        }
+
+        # Add command node displaying target's recipe if trim_mode is false
+        # and recipe exists. BTW, '\l' left-justifies each single line.
         my $lower_node;
         my @cmds = $root->commands;
-        if (!$trim_mode and @cmds) {
+        if (!$opts{trim_mode} and @cmds) {
+            # Command node gets an auto-created ID as its name
             $lower_node = _gen_id();
-            my $cmds = join("\n", map { _trim_cmd($_); } @cmds);
-            $gv->add_node($lower_node, label => $cmds, %cmd_style);
+            my $cmds = join("\\l", map { $opts{cmd_trim_fct}->($_); } @cmds);
+            $gv->add_node(
+                $lower_node,
+                label       => $cmds . "\\l",
+                %{$opts{cmd_style}}
+            );
+            # The recipe points to its target (dashed line if virtual target)
             $gv->add_edge(
                 $lower_node => $root_name,
                 $is_virtual ? (style => 'dashed') : ()
@@ -191,24 +263,28 @@ sub plot ($$@) {
             $lower_node = $root_name;
         }
 
-        my @prereqs = $root->prereqs;
+        # No further processing for end nodes
+        next if $is_end_node;
+
+        # Check prerequisites
         foreach (@prereqs) {
-            #warn "$_\n";
-            next if _find($_, @exclude);
+            # Ignore prerequisites on exclude list or named "|"
+            next if $_ eq "|" or (_find($_, @{$opts{exclude}}) and !_find($_, @{$opts{no_exclude}}));
+            # The prerequisite points to its dependent target (dashed line if virtual target)
             $gv->add_edge(
-                $_ => $lower_node,
+                $_          => $lower_node,
                 $is_virtual ? (style => 'dashed') : ());
-            #warn "$_ ++++++++++++++++++++\n";
+            # Recurse into 'plot' for prerequisite
             $self->plot($_, gv => $gv, @_);
         }
-        #warn "END\n";
-        #warn "GraphViz: $gv\n";
-    } continue { $i++ }
+    }
     return $gv;
 }
 
+# Plot graph with multiple (all) root targets
 sub plot_all ($) {
     my $self = shift;
+    # TODO: Should we not also apply $opts{init_args} here?
     my $gv = GraphViz->new(%InitArgs);
     %Nodes = ();
     for my $target ($self->roots) {
@@ -228,7 +304,7 @@ Makefile::GraphViz - Draw building flowcharts from Makefiles using GraphViz
 
 =head1 VERSION
 
-This document describes Makefile::GraphViz 0.20 released on 29 November 2011.
+This document describes Makefile::GraphViz 0.21 released on 7 December 2014.
 
 =head1 SYNOPSIS
 
@@ -559,12 +635,31 @@ L<gvmake>, L<GraphViz>, L<Makefile::Parser>.
 
 =head1 AUTHOR
 
-Zhang "agentzh" Yichun (章亦春) C<< <agentzh@gmail.com> >>
+Yichun "agentzh" Zhang (章亦春) C<< <agentzh@gmail.com> >>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2005-2011 by Zhang "agentzh" Yichun (章亦春).
+Copyright (c) 2005-2014 by Yichun "agentzh" Zhang (章亦春).
 
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+This module is licensed under the terms of the BSD license.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+=over
+
+=item *
+
+Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+=item *
+
+Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+=item *
+
+Neither the name of the authors nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+=back
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 

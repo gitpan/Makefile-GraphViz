@@ -1,10 +1,10 @@
-digraph test {
+digraph "blog.agentzh.org" {
 	ratio="fill";
-	node [fillcolor="#f5f694", shape="box", style="filled"];
+	node [fillcolor="#ffff99", fontname="Arial", fontsize="10", shape="box", style="filled"];
 	edge [color="red", len="2"];
 	node1 [label="blog.agentzh.org", shape="plaintext"];
 	node2 [label="index.html"];
-	node3 [fillcolor="#c7f77c", label="tpage $\| ...", shape="ellipse", style="filled"];
+	node3 [fillcolor="#dddddd", fontname="Monospace", fontsize="8", label="tpage $\| ...\l", shape="note", style="filled"];
 	node4 [label="header.tt"];
 	node5 [label="index.tt"];
 	node6 [label="footer.tt"];
@@ -14,7 +14,7 @@ digraph test {
 	node10 [label="JSON.js"];
 	node11 [label="openresty.js"];
 	node12 [label="jemplates.js"];
-	node13 [fillcolor="#c7f77c", label="jemplate --compile", shape="ellipse", style="filled"];
+	node13 [fillcolor="#dddddd", fontname="Monospace", fontsize="8", label="jemplate --compile\l", shape="note", style="filled"];
 	node14 [label="pager.tt"];
 	node15 [label="nav.tt"];
 	node16 [label="calendar.tt"];
